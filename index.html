@@ -641,9 +641,9 @@
     }
 
     .floating-modal {
-      position: absolute;
-      right: 22px;
-      bottom: 22px;
+      position: fixed;
+      right: 32px;
+      bottom: 32px;
       width: 390px;
       border-radius: 30px;
       overflow: hidden;
@@ -652,6 +652,37 @@
       border: 1px solid rgba(255, 255, 255, 0.88);
       box-shadow: 0 30px 60px rgba(66, 91, 151, 0.18);
       backdrop-filter: blur(24px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(16px);
+      transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+      z-index: 1000;
+    }
+
+    .floating-modal.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(215, 225, 255, 0.12);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 180ms ease, visibility 180ms ease;
+      z-index: 999;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
 
     .modal-head {
@@ -732,12 +763,6 @@
 
       .sidebar {
         min-height: auto;
-      }
-
-      .floating-modal {
-        position: static;
-        width: 100%;
-        margin-top: 18px;
       }
 
       .hero-main {
@@ -842,7 +867,7 @@
                 <div class="search-pill">⌕</div>
                 <span>搜索 UDID、搜索备注名称</span>
               </div>
-              <button class="add-btn">增加设备</button>
+              <button class="add-btn" id="open-device-modal" type="button">增加设备</button>
             </div>
           </div>
 
@@ -969,13 +994,14 @@
           </div>
         </div>
 
-        <section class="floating-modal">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <section class="floating-modal" id="device-modal">
           <div class="modal-head">
             <div>
               <h3>增加设备</h3>
               <p>保留原有表单结构，风格升级为更通透的玻璃弹窗。</p>
             </div>
-            <div class="modal-close">×</div>
+            <button class="modal-close" id="close-device-modal" type="button">×</button>
           </div>
           <div class="modal-body">
             <div class="field">
@@ -1011,13 +1037,39 @@
               <div class="field-box">4723</div>
             </div>
             <div class="modal-actions">
-              <button class="glass-btn-soft">取消</button>
-              <button class="glass-btn">保存设备</button>
+              <button class="glass-btn-soft" id="cancel-device-modal" type="button">取消</button>
+              <button class="glass-btn" type="button">保存设备</button>
             </div>
           </div>
         </section>
       </main>
     </div>
   </div>
+  <script>
+    const openDeviceModalButton = document.getElementById("open-device-modal");
+    const closeDeviceModalButton = document.getElementById("close-device-modal");
+    const cancelDeviceModalButton = document.getElementById("cancel-device-modal");
+    const deviceModal = document.getElementById("device-modal");
+    const modalBackdrop = document.getElementById("modal-backdrop");
+
+    function openDeviceModal() {
+      deviceModal.classList.add("open");
+      modalBackdrop.classList.add("open");
+    }
+
+    function closeDeviceModal() {
+      deviceModal.classList.remove("open");
+      modalBackdrop.classList.remove("open");
+    }
+
+    openDeviceModalButton.addEventListener("click", openDeviceModal);
+    closeDeviceModalButton.addEventListener("click", closeDeviceModal);
+    cancelDeviceModalButton.addEventListener("click", closeDeviceModal);
+    modalBackdrop.addEventListener("click", closeDeviceModal);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeDeviceModal();
+    });
+  </script>
 </body>
 </html>
